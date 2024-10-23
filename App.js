@@ -20,7 +20,6 @@ import Parks from './assets/Screens/Parks';
 
 const Stack = createNativeStackNavigator()
 const Stack = createStackNavigator();
-
 export default function App() {
   return (
     <NavigationContainer>
@@ -33,7 +32,6 @@ export default function App() {
         <Stack.Screen name='Wishlist' component={Wishlist} />
         <Stack.Screen name='Settings' component={Settings} />
         <Stack.Screen name='ChangePassword' component={ChangePassword} />
-        
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'City Explorer' }} />
         <Stack.Screen name="Restaurants" component={Restaurants} options={{ title: 'Restaurant Details' }} />
         <Stack.Screen name="Attractions" component={Attractions} options={{ title: 'List of Attractions' }} />
