@@ -1,14 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TextInput, Button, StyleSheet } from 'react-native';
 
 const CommunityPage = () => {
     const [posts, setPosts] = useState([]);
     const [newPost, setNewPost] = useState('');
 
+    // Fetch posts from backend on mount
+    useEffect(() => {
+        fetch('http://localhost:3000/posts')
+            .then(response => response.json())
+            .then(data => setPosts(data))
+            .catch(error => console.error('Error fetching posts:', error));
+    }, []);
+
+    // Handle new post submission
     const handlePostSubmit = () => {
         if (newPost) {
-            setPosts([...posts, { id: Date.now().toString(), content: newPost }]);
-            setNewPost('');
+            const post = { content: newPost, user: { firstName: "John", lastName: "Doe", email: "johndoe@example.com" }};
+            fetch('http://localhost:3000/posts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(post),
+            })
+                .then(response => response.json())
+                .then(newPost => {
+                    setPosts([...posts, newPost]);
+                    setNewPost('');
+                })
+                .catch(error => console.error('Error creating post:', error));
         }
     };
 
@@ -26,7 +47,7 @@ const CommunityPage = () => {
 
             <FlatList
                 data={posts}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
                     <View style={styles.post}>
                         <Text>{item.content}</Text>
