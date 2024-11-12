@@ -1,59 +1,107 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import axios from 'axios';
 
-const CommunityPage = () => {
-    const [posts, setPosts] = useState([]);
-    const [newPost, setNewPost] = useState('');
+const Community = () => {
+    const [groups, setGroups] = useState([]);
+    const [groupName, setGroupName] = useState('');
+    const [initialUserId, setInitialUserId] = useState('');
+    const [addUserId, setAddUserId] = useState('');
+    const [selectedGroupId, setSelectedGroupId] = useState(null);
 
-    // Fetch posts from backend on mount
     useEffect(() => {
-        fetch('http://localhost:3000/posts')
-            .then(response => response.json())
-            .then(data => setPosts(data))
-            .catch(error => console.error('Error fetching posts:', error));
+        fetchGroups();
     }, []);
 
-    // Handle new post submission
-    const handlePostSubmit = () => {
-        if (newPost) {
-            const post = { content: newPost, user: { firstName: "John", lastName: "Doe", email: "johndoe@example.com" }};
-            fetch('http://localhost:3000/posts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(post),
-            })
-                .then(response => response.json())
-                .then(newPost => {
-                    setPosts([...posts, newPost]);
-                    setNewPost('');
-                })
-                .catch(error => console.error('Error creating post:', error));
+    // Fetch all groups from the backend
+    const fetchGroups = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/groups');
+            setGroups(response.data);
+        } catch (error) {
+            console.error('Error fetching groups:', error);
+        }
+    };
+
+    // Create a new group with an initial member
+    const createGroup = async () => {
+        if (!groupName || !initialUserId) {
+            alert("Please enter both a group name and an initial user ID.");
+            return;
+        }
+
+        try {
+            const response = await axios.post('http://localhost:5000/groups', {
+                gname: groupName,
+                users: [initialUserId]  // Add initial member to the group
+            });
+            alert(`Group ${response.data.gname} created with initial user.`);
+            fetchGroups();  // Refresh the group list
+            setGroupName('');
+            setInitialUserId('');
+        } catch (error) {
+            console.error('Error creating group:', error);
+            alert('Failed to create group. Please try again.');
+        }
+    };
+
+    // Add a user to an existing group
+    const addUserToGroup = async () => {
+        if (!selectedGroupId || !addUserId) {
+            alert("Please select a group and provide a user ID.");
+            return;
+        }
+
+        try {
+            const response = await axios.post('http://localhost:5000/groups/addUser', {
+                groupId: selectedGroupId,
+                userId: addUserId,
+            });
+            alert(`User ${addUserId} added to group: ${response.data.gname}`);
+            fetchGroups();  // Refresh the group list
+            setAddUserId('');
+        } catch (error) {
+            console.error('Error adding user to group:', error);
+            alert('Failed to add user. Please try again.');
         }
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Community</Text>
-
+            <Text style={styles.header}>Create a New Group</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Share your experience..."
-                value={newPost}
-                onChangeText={setNewPost}
+                placeholder="userid"
+                value={groupName}
+                onChangeText={setGroupName}
             />
-            <Button title="Post" onPress={handlePostSubmit} />
+            <TextInput
+                style={styles.input}
+                placeholder="password"
+                value={initialUserId}
+                onChangeText={setInitialUserId}
+            />
+            <Button title="Create Group" onPress={createGroup} />
 
+            <Text style={styles.header}>Available Groups</Text>
             <FlatList
-                data={posts}
+                data={groups}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => (
-                    <View style={styles.post}>
-                        <Text>{item.content}</Text>
-                    </View>
+                    <TouchableOpacity style={styles.group} onPress={() => setSelectedGroupId(item._id)}>
+                        <Text style={styles.groupText}>{item.gname}</Text>
+                    </TouchableOpacity>
                 )}
             />
+
+            <Text style={styles.header}>Add User to Selected Group</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="User name"
+                value={addUserId}
+                onChangeText={setAddUserId}
+            />
+            <Button title="Add User to Group" onPress={addUserToGroup} />
         </View>
     );
 };
@@ -61,28 +109,34 @@ const CommunityPage = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
-        backgroundColor: '#fff',
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 10,
-    },
-    post: {
+        width: '100%',
         padding: 10,
         marginVertical: 5,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: '#ccc',
         borderRadius: 5,
+    },
+    header: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    group: {
+        padding: 15,
+        marginVertical: 10,
+        backgroundColor: '#e0f7fa',
+        width: '100%',
+        alignItems: 'center',
+        borderRadius: 8,
+    },
+    groupText: {
+        fontSize: 18,
     },
 });
 
-export default CommunityPage;
+export default Community;
