@@ -53,12 +53,16 @@ const Profile = ({ navigation }) => {
                         <TextInput id="phoneNumber" value={value} keyboardType='numeric' maxLength={10} placeholder="Enter phone number" placeholderTextColor={'gray'} onChangeText={handleChange} style={{ alignItems: 'flex-end', height: 30, width: 150, borderColor: 'white', borderRadius: 5, borderWidth: 1, color: 'white' }}></TextInput>
                     </View>
                     <View style={{ height: 60 }}></View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: 275, height: 40, position: 'static', opacity: 1 }}>
-                        <Button title="Save profile" color='green' borderColor='white' onPress={userDemo} style={{ backgroundColor: 'rgba(255, 255, 255, 1)', textAlign: 'center', borderColor: 'white', borderWidth: 10, width: 40, height: 20, flexDirection: 'column', borderRadius: 25 }} >Save profile</Button>
-                    </View>
-                    <View style={{ widht: 200, height: 100 }}></View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: 275, height: 40, position: 'static', opacity: 1 }}>
-                        <Button title="change password" color='red' borderColor='white' style={{ backgroundColor: 'rgba(255, 255, 255, 1)', textAlign: 'center', borderColor: 'white', borderWidth: 10, width: 40, height: 20, flexDirection: 'column', borderRadius: 25 }} onPress={() => navigation.navigate("ChangePassword")}>Change Password</Button>
+                    <View style={{ flexDirection: 'column', justifyContent: 'space-evenly', width: 200, height: 40, position: 'static', opacity: 1 }}>
+                        <Button title="Save profile" color='green' borderColor='white' onPress={userDemo} style={{ backgroundColor: 'rgba(255, 255, 255, 1)', textAlign: 'center', borderColor: 'white', borderWidth: 10, width: 75, height: 20, flexDirection: 'column', borderRadius: 25 }} >Save profile</Button>
+
+                        <View style={{ widht: 200, height: 10 }}></View>
+
+                        <Button title="change password" color='blue' borderColor='white' style={{ backgroundColor: 'rgba(255, 255, 255, 1)', textAlign: 'center', borderColor: 'white', borderWidth: 10, width: 75, height: 20, flexDirection: 'column', borderRadius: 25 }} onPress={() => navigation.navigate("ChangePassword")}>Change Password</Button>
+
+                        <View style={{ widht: 200, height: 10 }}></View>
+
+                        <Button title="delete account" color='red' borderColor='white' style={{ backgroundColor: 'rgba(255, 255, 255, 1)', textAlign: 'center', borderColor: 'white', borderWidth: 10, width: 75, height: 20, flexDirection: 'column', borderRadius: 25 }} >Delete account</Button>
                     </View>
                 </View>
                 <View style={{

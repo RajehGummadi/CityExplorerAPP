@@ -67,7 +67,7 @@ const CityExplorerHome = ({ navigation }) => {
                         <Feather name="heart" size={30} color="black" />
                         <Text style={styles.navText}>Wishlist</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate("Community")} style={styles.navItem}>
+                    <TouchableOpacity onPress={() => navigation.navigate("community")} style={styles.navItem}>
                         <FontAwesome6 name="people-group" size={30} color="black" />
                         <Text style={styles.navText}>Community</Text>
                     </TouchableOpacity>

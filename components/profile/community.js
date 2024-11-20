@@ -16,7 +16,7 @@ const Community = () => {
     // Fetch all groups from the backend
     const fetchGroups = async () => {
         try {
-            const response = await fetch('http://localhost:2024/addGroup', {
+            const response = await fetch('http://localhost:2024/groupById', {
                 method: 'GET',
             });
             const data = await response.json();

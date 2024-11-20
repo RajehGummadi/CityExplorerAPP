@@ -5,13 +5,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './components/Login';
 import SignUp from './components/profile/SignUp';
 import Home from './components/Home';
-import community from './components/profile/community';
 import Settings from './components/profile/Settings';
 import Profile from './components/profile/Profile';
 import Wishlist from './components/profile/Wishlist';
+import community from './components/profile/community';
 import ChangePassword from './components/ChangePassword';
 import CityExplorerHome from './components/profile/HomeScreen';
-import Events from './components/profile/Events';
 import Restaurants from './components/profile/Restaurants';
 import Attractions from './components/profile/Attractions';
 import Shopping from './components/profile/Shopping';
@@ -29,11 +28,10 @@ export default function App() {
         <Stack.Screen name='SignUp' component={SignUp} />
         <Stack.Screen name='Profile' component={Profile} />
         <Stack.Screen name='Wishlist' component={Wishlist} />
+        <Stack.Screen name='community' component={community} />
         <Stack.Screen name='Settings' component={Settings} />
-        <Stack.Screen name='Community' component={community} />
         <Stack.Screen name='ChangePassword' component={ChangePassword} />
         <Stack.Screen name='CityExplorerHome' component={CityExplorerHome} />
-        <Stack.Screen name='Events' component={Events} />
         <Stack.Screen name='Restaurants' component={Restaurants} />
         <Stack.Screen name='Attractions' component={Attractions} />
         <Stack.Screen name='Shopping' component={Shopping} />
