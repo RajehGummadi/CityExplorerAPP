@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './components/Login';
 import SignUp from './components/profile/SignUp';
 import Home from './components/Home';
-import Community from './components/Community';
+import community from './components/profile/community';
 import Settings from './components/profile/Settings';
 import Profile from './components/profile/Profile';
 import Wishlist from './components/profile/Wishlist';
@@ -30,7 +30,7 @@ export default function App() {
         <Stack.Screen name='Profile' component={Profile} />
         <Stack.Screen name='Wishlist' component={Wishlist} />
         <Stack.Screen name='Settings' component={Settings} />
-        <Stack.Screen name='Community' component={Community} />
+        <Stack.Screen name='Community' component={community} />
         <Stack.Screen name='ChangePassword' component={ChangePassword} />
         <Stack.Screen name='CityExplorerHome' component={CityExplorerHome} />
         <Stack.Screen name='Events' component={Events} />
