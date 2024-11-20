@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import axios from 'axios';
 
 const Community = () => {
     const [groups, setGroups] = useState([]);
-    const [groupName, setGroupName] = useState('');
+    const [gname, setGname] = useState('');
+    const [description, setDescription] = useState(''); // New state for description
     const [initialUserId, setInitialUserId] = useState('');
     const [addUserId, setAddUserId] = useState('');
-    const [selectedGroupId, setSelectedGroupId] = useState(null);
+    const [selectedGroupId, setSelectedGroupId] = useState('');
 
     useEffect(() => {
         fetchGroups();
@@ -16,28 +16,45 @@ const Community = () => {
     // Fetch all groups from the backend
     const fetchGroups = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/groups');
-            setGroups(response.data);
+            const response = await fetch('http://localhost:2024/addGroup', {
+                method: 'GET',
+            });
+            const data = await response.json();
+            setGroups(data);
         } catch (error) {
             console.error('Error fetching groups:', error);
         }
     };
 
-    // Create a new group with an initial member
+    // Create a new group with an initial member and description
     const createGroup = async () => {
-        if (!groupName || !initialUserId) {
-            alert("Please enter both a group name and an initial user ID.");
+        if (!gname || !description || !initialUserId) {
+            alert('Please enter a group name, description, and an initial user ID.');
             return;
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/groups', {
-                gname: groupName,
-                users: [initialUserId]  // Add initial member to the group
+            const response = await fetch('http://localhost:2024/group', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    gname,
+                    description, // Include description in the request
+                    users: initialUserId,
+                }),
             });
-            alert(`Group ${response.data.gname} created with initial user.`);
-            fetchGroups();  // Refresh the group list
-            setGroupName('');
+            const data = await response.json();
+            if (data.error) {
+                alert(`${data.error}`);
+            } else {
+                alert(`Group "${data.gname}" created with description.`);
+            }
+            
+            fetchGroups(); // Refresh the group list
+            setGname('');
+            setDescription('');
             setInitialUserId('');
         } catch (error) {
             console.error('Error creating group:', error);
@@ -48,17 +65,24 @@ const Community = () => {
     // Add a user to an existing group
     const addUserToGroup = async () => {
         if (!selectedGroupId || !addUserId) {
-            alert("Please select a group and provide a user ID.");
+            alert('Please select a group and provide a user ID.');
             return;
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/groups/addUser', {
-                groupId: selectedGroupId,
-                userId: addUserId,
+            const response = await fetch('http://localhost:2024/addGroup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    groupId: selectedGroupId,
+                    userId: addUserId,
+                }),
             });
-            alert(`User ${addUserId} added to group: ${response.data.gname}`);
-            fetchGroups();  // Refresh the group list
+            const data = await response.json();
+            alert(`User ${addUserId} added to group: ${data.gname}`);
+            fetchGroups(); // Refresh the group list
             setAddUserId('');
         } catch (error) {
             console.error('Error adding user to group:', error);
@@ -71,13 +95,19 @@ const Community = () => {
             <Text style={styles.header}>Create a New Group</Text>
             <TextInput
                 style={styles.input}
-                placeholder="userid"
-                value={groupName}
-                onChangeText={setGroupName}
+                placeholder="Group Name"
+                value={gname}
+                onChangeText={setGname}
             />
             <TextInput
                 style={styles.input}
-                placeholder="password"
+                placeholder="Group Description"
+                value={description} // Input for description
+                onChangeText={setDescription}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Initial User ID"
                 value={initialUserId}
                 onChangeText={setInitialUserId}
             />
@@ -90,6 +120,7 @@ const Community = () => {
                 renderItem={({ item }) => (
                     <TouchableOpacity style={styles.group} onPress={() => setSelectedGroupId(item._id)}>
                         <Text style={styles.groupText}>{item.gname}</Text>
+                        <Text style={styles.groupDescription}>{item.description}</Text> {/* Display description */}
                     </TouchableOpacity>
                 )}
             />
@@ -97,7 +128,7 @@ const Community = () => {
             <Text style={styles.header}>Add User to Selected Group</Text>
             <TextInput
                 style={styles.input}
-                placeholder="User name"
+                placeholder="User ID"
                 value={addUserId}
                 onChangeText={setAddUserId}
             />
@@ -136,7 +167,13 @@ const styles = StyleSheet.create({
     },
     groupText: {
         fontSize: 18,
+        fontWeight: 'bold',
+    },
+    groupDescription: {
+        fontSize: 14,
+        color: '#555',
+        marginTop: 5,
     },
 });
 
-export default Community;
+export default Community;
