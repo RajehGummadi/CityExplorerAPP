@@ -1,32 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
 const Community = () => {
-    const [groups, setGroups] = useState([]);
+    const [createdGroups, setCreatedGroups] = useState([]);  // Stores created groups
     const [gname, setGname] = useState('');
-    const [description, setDescription] = useState(''); // New state for description
+    const [description, setDescription] = useState('');
     const [initialUserId, setInitialUserId] = useState('');
     const [addUserId, setAddUserId] = useState('');
     const [selectedGroupId, setSelectedGroupId] = useState('');
+    const [showModal, setShowModal] = useState(false); // Modal visibility for creating a new group
+    const [showAddUserModal, setShowAddUserModal] = useState(false); // Modal visibility for adding a user
 
-    useEffect(() => {
-        fetchGroups();
-    }, []);
-
-    // Fetch all groups from the backend
-    const fetchGroups = async () => {
-        try {
-            const response = await fetch('http://localhost:2024/groupById', {
-                method: 'GET',
-            });
-            const data = await response.json();
-            setGroups(data);
-        } catch (error) {
-            console.error('Error fetching groups:', error);
-        }
-    };
-
-    // Create a new group with an initial member and description
+    // Create a new group and add it to createdGroups array
     const createGroup = async () => {
         if (!gname || !description || !initialUserId) {
             alert('Please enter a group name, description, and an initial user ID.');
@@ -41,7 +27,7 @@ const Community = () => {
                 },
                 body: JSON.stringify({
                     gname,
-                    description, // Include description in the request
+                    description,
                     users: initialUserId,
                 }),
             });
@@ -50,12 +36,13 @@ const Community = () => {
                 alert(`${data.error}`);
             } else {
                 alert(`Group "${data.gname}" created with description.`);
+                setCreatedGroups(prevGroups => [...prevGroups, data]);  // Add the new group to createdGroups
             }
             
-            fetchGroups(); // Refresh the group list
             setGname('');
             setDescription('');
             setInitialUserId('');
+            setShowModal(false); // Close the modal after group creation
         } catch (error) {
             console.error('Error creating group:', error);
             alert('Failed to create group. Please try again.');
@@ -65,7 +52,7 @@ const Community = () => {
     // Add a user to an existing group
     const addUserToGroup = async () => {
         if (!selectedGroupId || !addUserId) {
-            alert('Please select a group and provide a user ID.');
+            alert('Please provide a user ID.');
             return;
         }
 
@@ -82,57 +69,117 @@ const Community = () => {
             });
             const data = await response.json();
             alert(`User ${addUserId} added to group: ${data.gname}`);
-            fetchGroups(); // Refresh the group list
             setAddUserId('');
+            setShowAddUserModal(false); // Close the add user modal
         } catch (error) {
             console.error('Error adding user to group:', error);
             alert('Failed to add user. Please try again.');
         }
     };
 
+    // Delete an existing group
+    const deleteGroup = async (groupId) => {
+        try {
+            const response = await fetch(`http://localhost:2024/group/${groupId}`, {
+                method: 'DELETE',
+            });
+            const data = await response.json();
+            if (data.error) {
+                alert(`${data.error}`);
+            } else {
+                alert(`Group "${data.gname}" deleted.`);
+                setCreatedGroups(prevGroups => prevGroups.filter(group => group._id !== groupId));
+            }
+        } catch (error) {
+            console.error('Error deleting group:', error);
+            alert('Failed to delete group. Please try again.');
+        }
+    };
+
+    // Render each group item
+    const renderGroup = ({ item }) => (
+        <View style={styles.groupContainer}>
+            <View style={styles.groupInfo}>
+                <FontAwesome name="group" size={30} color="#555" style={styles.icon} />
+                <View>
+                    <Text style={styles.groupName}>{item.gname}</Text>
+                    <Text style={styles.groupDescription}>{item.description}</Text>
+                </View>
+            </View>
+            <View style={styles.groupActions}>
+                <TouchableOpacity onPress={() => { setSelectedGroupId(item._id); setShowAddUserModal(true); }}>
+                    <FontAwesome name="user-plus" size={20} color="green" style={styles.iconButton} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => deleteGroup(item._id)}>
+                    <FontAwesome name="trash" size={20} color="red" style={styles.iconButton} />
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Create a New Group</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Group Name"
-                value={gname}
-                onChangeText={setGname}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Group Description"
-                value={description} // Input for description
-                onChangeText={setDescription}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Initial User ID"
-                value={initialUserId}
-                onChangeText={setInitialUserId}
-            />
-            <Button title="Create Group" onPress={createGroup} />
+            <Text style={styles.header}>Communities</Text>
 
-            <Text style={styles.header}>Available Groups</Text>
-            <FlatList
-                data={groups}
-                keyExtractor={(item) => item._id}
-                renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.group} onPress={() => setSelectedGroupId(item._id)}>
-                        <Text style={styles.groupText}>{item.gname}</Text>
-                        <Text style={styles.groupDescription}>{item.description}</Text> {/* Display description */}
-                    </TouchableOpacity>
-                )}
-            />
+            {/* New Community Section */}
+            <TouchableOpacity style={styles.newCommunityContainer} onPress={() => setShowModal(true)}>
+                <FontAwesome name="plus" size={20} color="#007bff" />
+                <Text style={styles.newCommunityText}>New Community</Text>
+            </TouchableOpacity>
 
-            <Text style={styles.header}>Add User to Selected Group</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="User ID"
-                value={addUserId}
-                onChangeText={setAddUserId}
-            />
-            <Button title="Add User to Group" onPress={addUserToGroup} />
+            {/* Modal for creating a new group */}
+            <Modal visible={showModal} animationType="slide" onRequestClose={() => setShowModal(false)}>
+                <View style={styles.modalContainer}>
+                    <Text style={styles.modalHeader}>Create a New Group</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Group Name"
+                        value={gname}
+                        onChangeText={setGname}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Group Description"
+                        value={description}
+                        onChangeText={setDescription}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Initial User ID"
+                        value={initialUserId}
+                        onChangeText={setInitialUserId}
+                    />
+                    <Button title="Create Group" onPress={createGroup} />
+                    <Button title="Cancel" onPress={() => setShowModal(false)} color="red" />
+                </View>
+            </Modal>
+
+            {/* Modal for adding a user to a group */}
+            <Modal visible={showAddUserModal} animationType="slide" onRequestClose={() => setShowAddUserModal(false)}>
+                <View style={styles.modalContainer}>
+                    <Text style={styles.modalHeader}>Add User to Group</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="User ID"
+                        value={addUserId}
+                        onChangeText={setAddUserId}
+                    />
+                    <Button title="Add User" onPress={addUserToGroup} />
+                    <Button title="Cancel" onPress={() => setShowAddUserModal(false)} color="red" />
+                </View>
+            </Modal>
+
+            {/* Created Groups Section */}
+            {createdGroups.length > 0 && (
+                <View>
+                    <Text style={styles.header}>Available Groups</Text>
+                    <FlatList
+                        data={createdGroups}
+                        keyExtractor={(item) => item._id}
+                        renderItem={renderGroup}
+                    />
+                </View>
+            )}
         </View>
     );
 };
@@ -140,9 +187,39 @@ const Community = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        backgroundColor: '#fff',
         padding: 20,
+    },
+    header: {
+        fontSize: 24,
+        color: '#000',
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    newCommunityContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#f5f5f5',
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 20,
+    },
+    newCommunityText: {
+        color: '#007bff',
+        fontSize: 16,
+        marginLeft: 10,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        padding: 20,
+    },
+    modalHeader: {
+        fontSize: 20,
+        color: '#fff',
+        marginBottom: 15,
     },
     input: {
         width: '100%',
@@ -151,29 +228,47 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
+        backgroundColor: '#fff',
     },
-    header: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 20,
+    list: {
+        paddingBottom: 100,
     },
-    group: {
-        padding: 15,
-        marginVertical: 10,
-        backgroundColor: '#e0f7fa',
-        width: '100%',
+    groupContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        borderRadius: 8,
+        backgroundColor: '#fff',
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 15,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 4 },
+        shadowRadius: 5,
+        elevation: 2,
     },
-    groupText: {
+    groupInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    groupActions: {
+        flexDirection: 'row',
+    },
+    icon: {
+        marginRight: 15,
+    },
+    iconButton: {
+        marginHorizontal: 5,
+    },
+    groupName: {
+        color: '#000',
         fontSize: 18,
         fontWeight: 'bold',
     },
     groupDescription: {
-        fontSize: 14,
         color: '#555',
-        marginTop: 5,
+        fontSize: 14,
     },
 });
 
-export default Community;
+export default Community;
