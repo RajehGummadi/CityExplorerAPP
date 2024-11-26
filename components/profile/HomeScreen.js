@@ -5,13 +5,13 @@ import Feather from '@expo/vector-icons/Feather';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 
-const CityExplorerHome = ({ navigation }) => {
+const CityExplorerHome = ({ navigation, route }) => {
     const [searchText, setSearchText] = useState('');
-
+    const { userName, userToken } = route.params; // Retrieve the username passed from Login
     // Categories for exploration
     const categories = [
         { name: 'Restaurants', icon: '🍽️', screen: 'Restaurants' },
-         { name: 'Events', icon: '🎉', screen: 'Events' },
+        { name: 'Events', icon: '🎉', screen: 'Events' },
         { name: 'Attractions', icon: '🎢', screen: 'Attractions' },
         { name: 'Shopping', icon: '🛍️', screen: 'Shopping' },
         { name: 'Parks', icon: '🌳', screen: 'Parks' },
@@ -29,7 +29,7 @@ const CityExplorerHome = ({ navigation }) => {
 
                 <ScrollView contentContainerStyle={styles.contentContainer}>
                     <Text style={styles.header}>City Explorer</Text>
-
+                    <Text style={styles.title}>Welcome, {userName}</Text>
                     {/* Search Bar */}
                     <View style={styles.searchContainer}>
                         <TextInput
@@ -71,7 +71,7 @@ const CityExplorerHome = ({ navigation }) => {
                         <FontAwesome6 name="people-group" size={30} color="black" />
                         <Text style={styles.navText}>Community</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate("Settings")} style={styles.navItem}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Settings", { userName, userToken })} style={styles.navItem}>
                         <SimpleLineIcons name="settings" size={30} color="black" />
                         <Text style={styles.navText}>Settings</Text>
                     </TouchableOpacity>
@@ -103,11 +103,18 @@ const styles = StyleSheet.create({
         paddingBottom: 80, // Extra space for the bottom navigation
     },
     header: {
-        fontSize: 30,
+        fontSize: 24,
         fontWeight: 'bold',
         color: '#fff',
         textAlign: 'center',
-        marginBottom: 20,
+        marginBottom: 18,
+    },
+    title: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#fff',
+        textAlign: 'center',
+        marginBottom: 16,
     },
     searchContainer: {
         flexDirection: 'row',

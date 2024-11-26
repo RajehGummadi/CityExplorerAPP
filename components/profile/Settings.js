@@ -6,8 +6,10 @@ import Feather from '@expo/vector-icons/Feather';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 
-const Settings = ({ navigation }) => {
+const Settings = ({ navigation, route }) => {
     const [modalVisible, setModalVisible] = useState(false);
+    const { userName, userToken } = route.params; // Retrieve the username passed from Login
+
     return (
         <ScrollView scrollEnabled={false}>
             <ImageBackground source={require('../wallpaper.jpg')} style={styles.background}
@@ -18,7 +20,7 @@ const Settings = ({ navigation }) => {
                     <View style={{ flexWrap: 'wrap', flexDirection: 'column', justifyContent: 'space-evenly' }}>
                         <View style={{ flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-evenly', height: 35 }}>
                             <Text style={{ fontSize: 16, color: 'white', width: 250, height: 15, padding: 10 }}>Profile</Text>
-                            <SimpleLineIcons name="arrow-right" size={16} color="white" height={35} style={{ margin: 'auto' }} onPress={() => navigation.navigate("Profile")} />
+                            <SimpleLineIcons name="arrow-right" size={16} color="white" height={35} style={{ margin: 'auto' }} onPress={() => navigation.navigate("Profile", { userName, userToken })} />
                         </View>
                         <View style={{ flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-evenly', height: 35 }}>
                             <Text style={{ fontSize: 16, color: 'white', width: 250, height: 15, padding: 10 }}>Apprearance</Text>
@@ -99,7 +101,7 @@ const Settings = ({ navigation }) => {
                     <View style={{ backgroundColor: 'white', height: 20, flexDirection: 'row', justifyContent: 'space-evenly' }}>
                         <Text>Explore</Text>
                         <Text>Wishlist</Text>
-                        <Text>People</Text>
+                        <Text>Community</Text>
                         <Text>Settings</Text>
                     </View>
                 </View>

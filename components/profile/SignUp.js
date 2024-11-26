@@ -70,7 +70,7 @@ const SignUp = ({ navigation }) => {
             if (!passwordError) {
                 console.log("Form submitted with:", password);
             }
-            const result = await response.json();
+            await response.status;
             if (response.ok) {
                 //Alert.alert("Success", "User created successfully!");
                 setMsg(`User created successfully! Please Login now.`);

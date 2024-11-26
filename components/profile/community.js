@@ -143,12 +143,7 @@ const Community = () => {
                         value={description}
                         onChangeText={setDescription}
                     />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Initial User ID"
-                        value={initialUserId}
-                        onChangeText={setInitialUserId}
-                    />
+                   
                     <Button title="Create Group" onPress={createGroup} />
                     <Button title="Cancel" onPress={() => setShowModal(false)} color="red" />
                 </View>

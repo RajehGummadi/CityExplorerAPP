@@ -1,14 +1,17 @@
 import { React, useState, useEffect } from "react";
 import { StyleSheet, View, Text, Button, TouchableOpacity, Alert, TextInput, ImageBackground, ScrollView, SafeAreaView, ViewComponent, linearGradientProps } from "react-native";
-// import { LOGIN_API_URL } from "@env";
-// import env from "react-native-dotenv";
+//import { LOGIN_API_URL, APP_ENV } from '@env';
 
 
 const Login = ({ navigation }) => {
 
     const [userName, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    let userToken;
     const [msg, setMsg] = useState('');
+
+    // console.log(process.env.APP_ENV);
+    // console.log(process.env.LOGIN_API_URL);
     const handleLogin = async () => {
         try {
             const response = await fetch("http://localhost:2024/login", {
@@ -20,18 +23,18 @@ const Login = ({ navigation }) => {
                 body: JSON.stringify({ userName, password }),
             });
 
-            await response.json();
+            const data = await response.json();
             if (response.ok) {
-                navigation.navigate("CityExplorerHome")
+                userToken = data.token;
+                navigation.navigate("CityExplorerHome", { userName, userToken })
                 // Alert.alert("Success", result.message);
             } else {
-                // Alert.alert("Error", result.message);
                 setMsg(`Invalid credentails, Please try again.`);
                 console.error("Invalid credentials");
-
             }
         } catch (error) {
             Alert.alert("Error", "Something went wrong. Please try again.");
+            setMsg(`Invalid credentails, Please try again.`);
             console.error(error);
         }
     };
