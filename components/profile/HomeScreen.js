@@ -10,10 +10,10 @@ const CityExplorerHome = ({ navigation, route }) => {
     const { userName, userToken } = route.params; // Retrieve the username passed from Login
     // Categories for exploration
     const categories = [
-        { name: 'Restaurants', icon: '🍽️', screen: 'Restaurants' },
+        { name: 'Restaurants', icon: '🍽', screen: 'Restaurants' },
         { name: 'Events', icon: '🎉', screen: 'Events' },
         { name: 'Attractions', icon: '🎢', screen: 'Attractions' },
-        { name: 'Shopping', icon: '🛍️', screen: 'Shopping' },
+        { name: 'Shopping', icon: '🛍', screen: 'Shopping' },
         { name: 'Parks', icon: '🌳', screen: 'Parks' },
         { name: 'More', icon: '🌃', screen: 'More' },
     ];
@@ -67,7 +67,8 @@ const CityExplorerHome = ({ navigation, route }) => {
                         <Feather name="heart" size={30} color="black" />
                         <Text style={styles.navText}>Wishlist</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate("community")} style={styles.navItem}>
+                    {/* change-> added , { userName, userToken}  to pass data from home page to community page */}
+                    <TouchableOpacity onPress={() => navigation.navigate("community", { userName, userToken} )} style={styles.navItem}>
                         <FontAwesome6 name="people-group" size={30} color="black" />
                         <Text style={styles.navText}>Community</Text>
                     </TouchableOpacity>

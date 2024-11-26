@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react";
-import { StyleSheet, View, Text, Button, TextInput, ImageBackground, ScrollView, ActivityIndicator, Alert, SafeAreaView } from "react-native";
+import { StyleSheet, View, Text, Button, TextInput, ImageBackground, ScrollView, ActivityIndicator, Alert, Modal, TouchableOpacity, SafeAreaView } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
@@ -17,6 +17,7 @@ const Profile = ({ navigation, route }) => {
     const [email, setUserEmail] = useState('');
     const [phoneNumber, setUserphonenumber] = useState('');
     const [msg, setMsg] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
 
     const handleChange = (text) => {
 
@@ -56,6 +57,7 @@ const Profile = ({ navigation, route }) => {
 
     const deleteProfile = async () => {
         try {
+            setModalVisible(false);
             const response = await fetch(`http://localhost:2024/delete-account?username=${userName}`, {
                 method: 'DELETE',
                 headers: {
@@ -164,8 +166,34 @@ const Profile = ({ navigation, route }) => {
 
                         <View style={{ widht: 200, height: 10 }}></View>
 
-                        <Button title="delete account" color='red' borderColor='white' style={{ backgroundColor: 'rgba(255, 255, 255, 1)', textAlign: 'center', borderColor: 'white', borderWidth: 10, width: 75, height: 20, flexDirection: 'column', borderRadius: 25 }} onPress={deleteProfile} >Delete account</Button>
+                        <Button title="delete account" color='red' borderColor='white' style={{ backgroundColor: 'rgba(255, 255, 255, 1)', textAlign: 'center', borderColor: 'white', borderWidth: 10, width: 75, height: 20, flexDirection: 'column', borderRadius: 25 }} onPress={() => setModalVisible(true)} >Delete account</Button>
                     </View>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose={() => setModalVisible(false)} // Handle hardware back button
+                    >
+                        <View style={styles.overlay}>
+                            <View style={styles.popup}>
+                                <Text style={styles.popupText}>Are you sure you want to delete your profile</Text>
+                                <View style={styles.buttonContainer}>
+                                    <TouchableOpacity
+                                        style={styles.yesButton}
+                                        onPress={deleteProfile}
+                                    >
+                                        <Text style={styles.yesButtonText}>Yes</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.noButton}
+                                        onPress={() => setModalVisible(false)}
+                                    >
+                                        <Text style={styles.noButtonText}>No</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
                 </View>
                 <View style={{
                     justifyContent: 'flex-end',
@@ -213,7 +241,63 @@ const styles = StyleSheet.create({
     },
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0)', // Optional overlay color
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    popup: {
+        width: 300,
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        alignItems: 'center',
+        elevation: 5, // Adds shadow for Android
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 }, // Adds shadow for iOS
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    popupText: {
+        fontSize: 18,
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '50%'
+    },
+    closeButton: {
+        backgroundColor: '#2196F3',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    noButton: {
+        backgroundColor: 'red',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    yesButton: {
+        backgroundColor: 'green',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    closeButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
+    noButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+    yesButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold'
     },
     successMsg: {
         color: 'yellow', // Outline color

@@ -1,47 +1,49 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-
-const Community = () => {
+ //added route and navigate to community page
+const Community = ( {navigation,route }) => {
     const [createdGroups, setCreatedGroups] = useState([]);  // Stores created groups
-    const [gname, setGname] = useState('');
+    const [groupName, setGname] = useState('');
     const [description, setDescription] = useState('');
-    const [initialUserId, setInitialUserId] = useState('');
     const [addUserId, setAddUserId] = useState('');
     const [selectedGroupId, setSelectedGroupId] = useState('');
     const [showModal, setShowModal] = useState(false); // Modal visibility for creating a new group
     const [showAddUserModal, setShowAddUserModal] = useState(false); // Modal visibility for adding a user
+    const { userName, userToken } = route.params; //username and usertoken taken from route.params 
 
     // Create a new group and add it to createdGroups array
     const createGroup = async () => {
-        if (!gname || !description || !initialUserId) {
+       //value of the userName(logined user) is set to initialUserId
+        const initialUserId=userName
+        if (!groupName || !description || !initialUserId) {
             alert('Please enter a group name, description, and an initial user ID.');
             return;
         }
 
         try {
+            
             const response = await fetch('http://localhost:2024/group', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    gname,
+                    groupName,
                     description,
                     users: initialUserId,
                 }),
             });
             const data = await response.json();
             if (data.error) {
-                alert(`${data.error}`);
+                alert(`${data.error}`);  // Corrected template literal syntax
             } else {
-                alert(`Group "${data.gname}" created with description.`);
+                alert(`Group "${data.groupName}" created with description.`);  // Corrected template literal syntax
                 setCreatedGroups(prevGroups => [...prevGroups, data]);  // Add the new group to createdGroups
             }
             
             setGname('');
             setDescription('');
-            setInitialUserId('');
             setShowModal(false); // Close the modal after group creation
         } catch (error) {
             console.error('Error creating group:', error);
@@ -68,7 +70,8 @@ const Community = () => {
                 }),
             });
             const data = await response.json();
-            alert(`User ${addUserId} added to group: ${data.gname}`);
+            alert(`User ${addUserId} added to group: ${data.groupName}`);
+
             setAddUserId('');
             setShowAddUserModal(false); // Close the add user modal
         } catch (error) {
@@ -87,7 +90,7 @@ const Community = () => {
             if (data.error) {
                 alert(`${data.error}`);
             } else {
-                alert(`Group "${data.gname}" deleted.`);
+                alert(`Group "${data.groupName}" deleted.`);
                 setCreatedGroups(prevGroups => prevGroups.filter(group => group._id !== groupId));
             }
         } catch (error) {
@@ -95,6 +98,7 @@ const Community = () => {
             alert('Failed to delete group. Please try again.');
         }
     };
+    
 
     // Render each group item
     const renderGroup = ({ item }) => (
@@ -102,7 +106,7 @@ const Community = () => {
             <View style={styles.groupInfo}>
                 <FontAwesome name="group" size={30} color="#555" style={styles.icon} />
                 <View>
-                    <Text style={styles.groupName}>{item.gname}</Text>
+                    <Text style={styles.groupName}>{item.groupName}</Text>
                     <Text style={styles.groupDescription}>{item.description}</Text>
                 </View>
             </View>
@@ -134,7 +138,7 @@ const Community = () => {
                     <TextInput
                         style={styles.input}
                         placeholder="Group Name"
-                        value={gname}
+                        value={groupName}
                         onChangeText={setGname}
                     />
                     <TextInput
@@ -266,4 +270,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Community;
+export default Community;
