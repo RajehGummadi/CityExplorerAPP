@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
- //added route and navigate to community page
-const Community = ( {navigation,route }) => {
-    const [createdGroups, setCreatedGroups] = useState([]);  // Stores created groups
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Feather from '@expo/vector-icons/Feather';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+
+const Community = ({ navigation, route }) => {
+    const [createdGroups, setCreatedGroups] = useState([]); // Stores created groups
     const [groupName, setGname] = useState('');
     const [description, setDescription] = useState('');
     const [addUserId, setAddUserId] = useState('');
@@ -12,17 +16,14 @@ const Community = ( {navigation,route }) => {
     const [showAddUserModal, setShowAddUserModal] = useState(false); // Modal visibility for adding a user
     const { userName, userToken } = route.params; //username and usertoken taken from route.params 
 
-    // Create a new group and add it to createdGroups array
     const createGroup = async () => {
-       //value of the userName(logined user) is set to initialUserId
-        const initialUserId=userName
+        const initialUserId = userName;
         if (!groupName || !description || !initialUserId) {
             alert('Please enter a group name, description, and an initial user ID.');
             return;
         }
 
         try {
-            
             const response = await fetch('http://localhost:2024/group', {
                 method: 'POST',
                 headers: {
@@ -36,12 +37,11 @@ const Community = ( {navigation,route }) => {
             });
             const data = await response.json();
             if (data.error) {
-                alert(`${data.error}`);  // Corrected template literal syntax
+                alert(data.error);
             } else {
-                alert(`Group "${data.groupName}" created with description.`);  // Corrected template literal syntax
-                setCreatedGroups(prevGroups => [...prevGroups, data]);  // Add the new group to createdGroups
+                alert(`Group "${data.groupName}" created with description: "${data.description}".`);
+                setCreatedGroups(prevGroups => [...prevGroups, data]);
             }
-            
             setGname('');
             setDescription('');
             setShowModal(false); // Close the modal after group creation
@@ -51,7 +51,6 @@ const Community = ( {navigation,route }) => {
         }
     };
 
-    // Add a user to an existing group
     const addUserToGroup = async () => {
         if (!selectedGroupId || !addUserId) {
             alert('Please provide a user ID.');
@@ -71,7 +70,6 @@ const Community = ( {navigation,route }) => {
             });
             const data = await response.json();
             alert(`User ${addUserId} added to group: ${data.groupName}`);
-
             setAddUserId('');
             setShowAddUserModal(false); // Close the add user modal
         } catch (error) {
@@ -80,7 +78,6 @@ const Community = ( {navigation,route }) => {
         }
     };
 
-    // Delete an existing group
     const deleteGroup = async (groupId) => {
         try {
             const response = await fetch(`http://localhost:2024/group/${groupId}`, {
@@ -88,7 +85,7 @@ const Community = ( {navigation,route }) => {
             });
             const data = await response.json();
             if (data.error) {
-                alert(`${data.error}`);
+                alert(`Error: ${data.error}`);
             } else {
                 alert(`Group "${data.groupName}" deleted.`);
                 setCreatedGroups(prevGroups => prevGroups.filter(group => group._id !== groupId));
@@ -98,9 +95,7 @@ const Community = ( {navigation,route }) => {
             alert('Failed to delete group. Please try again.');
         }
     };
-    
 
-    // Render each group item
     const renderGroup = ({ item }) => (
         <View style={styles.groupContainer}>
             <View style={styles.groupInfo}>
@@ -147,7 +142,6 @@ const Community = ( {navigation,route }) => {
                         value={description}
                         onChangeText={setDescription}
                     />
-                   
                     <Button title="Create Group" onPress={createGroup} />
                     <Button title="Cancel" onPress={() => setShowModal(false)} color="red" />
                 </View>
@@ -177,8 +171,29 @@ const Community = ( {navigation,route }) => {
                         keyExtractor={(item) => item._id}
                         renderItem={renderGroup}
                     />
-                </View>
+                </View>  
             )}
+
+            {/* Bottom Navigation Bar */}
+            <View style={styles.bottomNavContainer}>
+                <TouchableOpacity onPress={() => navigation.navigate("CityExplorerHome", { userName, userToken })} style={styles.navItem}>
+                <MaterialCommunityIcons name="file-find-outline" size={30} color="black" />
+                    <Text style={styles.navText}>Home</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("Wishlist", { userName, userToken })} style={styles.navItem}>
+                    <Feather name="heart" size={30} color="black" />
+                    <Text style={styles.navText}>Wishlist</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("community", { userName, userToken })} style={styles.navItem}>
+                    <FontAwesome6 name="people-group" size={30} color="black" />
+                    <Text style={styles.navText}>Community</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("Settings", { userName, userToken })} style={styles.navItem}>
+                <SimpleLineIcons name="settings" size={30} color="black" />
+                    <Text style={styles.navText}>Settings</Text>
+                </TouchableOpacity>
+            </View>
+
         </View>
     );
 };
@@ -229,9 +244,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: '#fff',
     },
-    list: {
-        paddingBottom: 100,
-    },
     groupContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -268,6 +280,27 @@ const styles = StyleSheet.create({
         color: '#555',
         fontSize: 14,
     },
+    bottomNavContainer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        paddingVertical: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#ddd',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        height: 60,
+    },
+    navItem: {
+        alignItems: 'center',
+    },
+    navText: {
+        fontSize: 12,
+        color: 'black',
+    },
 });
 
-export default Community;
+export default Community;

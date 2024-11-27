@@ -93,9 +93,9 @@ const Settings = ({ navigation, route }) => {
                     right: 0,
                 }}>
                     <View style={{ backgroundColor: 'white', height: 30, flexDirection: 'row', justifyContent: 'space-evenly' }}>
-                        <MaterialCommunityIcons name="file-find-outline" size={30} color="black" onPress={() => navigation.navigate("CityExplorerHome")} />
-                        <Feather name="heart" size={30} color="black" onPress={() => navigation.navigate("Wishlist")} />
-                        <FontAwesome6 name="people-group" size={30} color="black" />
+                        <MaterialCommunityIcons name="file-find-outline" size={30} color="black" onPress={() => navigation.navigate("CityExplorerHome", { userName, userToken })} />
+                        <Feather name="heart" size={30} color="black" onPress={() => navigation.navigate("Wishlist", { userName, userToken })} />
+                        <FontAwesome6 name="people-group" size={30} color="black" onPress={() => navigation.navigate("community", { userName, userToken })} />
                         <SimpleLineIcons name="settings" size={30} color="black" />
                     </View>
                     <View style={{ backgroundColor: 'white', height: 20, flexDirection: 'row', justifyContent: 'space-evenly' }}>

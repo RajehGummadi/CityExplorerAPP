@@ -10,9 +10,10 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { events } from "../../data/events-data";
 
-const Wishlist = ({ navigation }) => {
+const Wishlist = ({ navigation, route }) => {
 
     // const [liked, setLiked] = useState(false);
+    const { userName, userToken } = route.params; // Retrieve the username passed from Login
     const [selected, setSelected] = useState(events)
     const [cart, setCart] = useState([])
     const [modalVisible, setModalVisible] = useState(false);
@@ -97,9 +98,11 @@ const Wishlist = ({ navigation }) => {
         <ScrollView scrollEnabled={false}>
             <ImageBackground source={require('../wallpaper.jpg')}
                 resizeMode="cover">
-                <View style={{ alignItems: 'center', height: 553 }}>
-                    <Text style={{ fontSize: 16, color: 'white', minHeight: 30 }}>Upcoming events</Text>
-                    <View style={{ width: 'auto', height: 225, backgroundColor: 'white', flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                <View style={styles.overlay} />
+
+                <ScrollView contentContainerStyle={styles.contentContainer}>
+                    <Text style={{ fontSize: 16, color: 'white', minHeight: 30, alignItems: 'center' }}>Upcoming events</Text>
+                    <View style={{ width: 'auto', height: 216, backgroundColor: 'white', flexDirection: 'column', justifyContent: 'space-evenly' }}>
                         <ScrollView>
                             <FlatList
                                 data={selected}
@@ -162,16 +165,34 @@ const Wishlist = ({ navigation }) => {
                             </Modal>
                         </ScrollView>
                     </View>
-                    <Text style={{ fontSize: 16, color: 'white', minHeight: 30 }}>My events</Text>
-                    <View style={{ borderRadius: 5, height: 250, backgroundColor: 'white', flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                    <Text style={{ fontSize: 16, color: 'white', minHeight: 30, alignItems: 'center' }}>My events</Text>
+                    <View style={{ borderRadius: 5, height: 216, backgroundColor: 'white', flexDirection: 'column', justifyContent: 'space-evenly' }}>
                         <ScrollView>
 
                             <ul style={{ margin: 0, padding: 0 }}>{cartItems}</ul>
 
                         </ScrollView>
                     </View>
-                </View>
-                <View style={{
+                    <View style={styles.bottomNavContainer}>
+                        <TouchableOpacity onPress={() => navigation.navigate("CityExplorerHome", { userName, userToken })} style={styles.navItem}>
+                            <MaterialCommunityIcons name="file-find-outline" size={30} color="black" />
+                            <Text style={styles.navText}>Explore</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate("Wishlist", { userName, userToken })} style={styles.navItem}>
+                            <Feather name="heart" size={30} color="black" />
+                            <Text style={styles.navText}>Wishlist</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate("community", { userName, userToken })} style={styles.navItem}>
+                            <FontAwesome6 name="people-group" size={30} color="black" />
+                            <Text style={styles.navText}>Community</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate("Settings", { userName, userToken })} style={styles.navItem}>
+                            <SimpleLineIcons name="settings" size={30} color="black" />
+                            <Text style={styles.navText}>Settings</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+                {/* <View style={{
                     justifyContent: 'flex-end',
                     bottom: 0,
                     left: 0,
@@ -186,10 +207,11 @@ const Wishlist = ({ navigation }) => {
                     <View style={{ backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-evenly' }}>
                         <Text>Explore</Text>
                         <Text>Wishlist</Text>
-                        <Text>People</Text>
+                        <Text>Community</Text>
                         <Text>Settings</Text>
                     </View>
-                </View>
+                </View> */}
+
             </ImageBackground >
         </ScrollView>
     );
@@ -202,9 +224,22 @@ const styles = StyleSheet.create({
         height: 1,
         backgroundColor: 'black'
     },
-    overlay: {
+    backgroundImage: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0)', // Optional overlay color
+        justifyContent: 'center',
+    },
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    },
+    contentContainer: {
+        paddingHorizontal: 20,
+        paddingVertical: 30,
+        paddingBottom: 80, // Extra space for the bottom navigation
     },
     container: {
         flex: 1
@@ -236,5 +271,27 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontWeight: 'bold',
+    },
+    bottomNavContainer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        flexDirection: 'row',
+        backgroundColor: '#fff',
+        paddingVertical: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#ddd',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        height: 60,
+    },
+    navItem: {
+        alignItems: 'center',
+    },
+    navText: {
+        fontSize: 12,
+        color: 'black',
+        marginTop: 4,
     },
 });
