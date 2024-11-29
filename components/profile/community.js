@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, FlatList, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
@@ -15,6 +15,32 @@ const Community = ({ navigation, route }) => {
     const [showModal, setShowModal] = useState(false); // Modal visibility for creating a new group
     const [showAddUserModal, setShowAddUserModal] = useState(false); // Modal visibility for adding a user
     const { userName, userToken } = route.params; //username and usertoken taken from route.params 
+
+    // Fetch groups from the backend
+    const fetchGroups = async () => {
+        try {
+            const response = await fetch('http://localhost:2024/allGroup', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            if (data.error) {
+                alert(data.error);
+            } else {
+                setCreatedGroups(data); // Update the groups in the state
+            }
+        } catch (error) {
+            console.error('Error fetching groups:', error);
+            alert('Failed to fetch groups. Please try again.');
+        }
+    };
+
+    // Use useEffect to fetch groups on component mount
+    useEffect(() => {
+        fetchGroups();
+    }, []);
 
     const createGroup = async () => {
         const initialUserId = userName;
@@ -80,7 +106,7 @@ const Community = ({ navigation, route }) => {
 
     const deleteGroup = async (groupId) => {
         try {
-            const response = await fetch(`http://localhost:2024/group/${groupId}`, {
+            const response = await fetch(`http://localhost:2024/deleteGroup`, {
                 method: 'DELETE',
             });
             const data = await response.json();
@@ -115,17 +141,17 @@ const Community = ({ navigation, route }) => {
             </View>
         </View>
     );
-
+    
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Communities</Text>
-
+    
             {/* New Community Section */}
             <TouchableOpacity style={styles.newCommunityContainer} onPress={() => setShowModal(true)}>
                 <FontAwesome name="plus" size={20} color="#007bff" />
                 <Text style={styles.newCommunityText}>New Community</Text>
             </TouchableOpacity>
-
+    
             {/* Modal for creating a new group */}
             <Modal visible={showModal} animationType="slide" onRequestClose={() => setShowModal(false)}>
                 <View style={styles.modalContainer}>
@@ -146,7 +172,7 @@ const Community = ({ navigation, route }) => {
                     <Button title="Cancel" onPress={() => setShowModal(false)} color="red" />
                 </View>
             </Modal>
-
+    
             {/* Modal for adding a user to a group */}
             <Modal visible={showAddUserModal} animationType="slide" onRequestClose={() => setShowAddUserModal(false)}>
                 <View style={styles.modalContainer}>
@@ -161,23 +187,22 @@ const Community = ({ navigation, route }) => {
                     <Button title="Cancel" onPress={() => setShowAddUserModal(false)} color="red" />
                 </View>
             </Modal>
-
+    
             {/* Created Groups Section */}
             {createdGroups.length > 0 && (
-                <View>
-                    <Text style={styles.header}>Available Groups</Text>
-                    <FlatList
-                        data={createdGroups}
-                        keyExtractor={(item) => item._id}
-                        renderItem={renderGroup}
-                    />
-                </View>  
+                <FlatList
+                    data={createdGroups}
+                    keyExtractor={(item) => item._id}
+                    renderItem={renderGroup}
+                    showsVerticalScrollIndicator={true} // Enable vertical scrollbar
+                    contentContainerStyle={{ paddingBottom: 20 }} // Add padding at the bottom
+                />
             )}
-
+    
             {/* Bottom Navigation Bar */}
             <View style={styles.bottomNavContainer}>
                 <TouchableOpacity onPress={() => navigation.navigate("CityExplorerHome", { userName, userToken })} style={styles.navItem}>
-                <MaterialCommunityIcons name="file-find-outline" size={30} color="black" />
+                    <MaterialCommunityIcons name="file-find-outline" size={30} color="black" />
                     <Text style={styles.navText}>Home</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate("Wishlist", { userName, userToken })} style={styles.navItem}>
@@ -189,14 +214,13 @@ const Community = ({ navigation, route }) => {
                     <Text style={styles.navText}>Community</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate("Settings", { userName, userToken })} style={styles.navItem}>
-                <SimpleLineIcons name="settings" size={30} color="black" />
+                    <SimpleLineIcons name="settings" size={30} color="black" />
                     <Text style={styles.navText}>Settings</Text>
                 </TouchableOpacity>
             </View>
-
         </View>
     );
-};
+};    
 
 const styles = StyleSheet.create({
     container: {
