@@ -1,12 +1,13 @@
 // screens/Attractions.js
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 
-const Attractions = ({ navigation }) => {
+const Attractions = ({ navigation, route }) => {
+    const { userName, userToken } = route.params; // Retrieve the username passed from Login
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Attractions</Text>
@@ -14,19 +15,19 @@ const Attractions = ({ navigation }) => {
 
             {/* Bottom Navigation Bar */}
             <View style={styles.bottomNavContainer}>
-                <TouchableOpacity onPress={() => navigation.navigate("Explore")} style={styles.navItem}>
+                <TouchableOpacity onPress={() => navigation.navigate("CityExplorerHome", { userName, userToken })} style={styles.navItem}>
                     <MaterialCommunityIcons name="file-find-outline" size={30} color="black" />
                     <Text style={styles.navText}>Explore</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate("Wishlist")} style={styles.navItem}>
+                <TouchableOpacity onPress={() => navigation.navigate("Wishlist", { userName, userToken })} style={styles.navItem}>
                     <Feather name="heart" size={30} color="black" />
                     <Text style={styles.navText}>Wishlist</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate("Community")} style={styles.navItem}>
+                <TouchableOpacity onPress={() => navigation.navigate("community", { userName, userToken })} style={styles.navItem}>
                     <FontAwesome6 name="people-group" size={30} color="black" />
                     <Text style={styles.navText}>Community</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate("Settings")} style={styles.navItem}>
+                <TouchableOpacity onPress={() => navigation.navigate("Settings", { userName, userToken })} style={styles.navItem}>
                     <SimpleLineIcons name="settings" size={30} color="black" />
                     <Text style={styles.navText}>Settings</Text>
                 </TouchableOpacity>
