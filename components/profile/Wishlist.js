@@ -81,12 +81,15 @@ const Wishlist = ({ navigation, route }) => {
         <li key={item.id}>
             <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }} >
                 <MaterialIcons name="event-available" Text="event" size={48} color='#668cff' />
-                <View style={{ flexDirection: 'column', flexWrap: 'wrap', width: 275 }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{item.eventName}</Text>
-                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{item.date}</Text>
+                <View style={{ flexDirection: 'column', flexWrap: 'wrap', width: 'auto' }}>
+                    <Text style={{ width: 225, fontSize: 16, fontWeight: 'bold' }}>{item.eventName}</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }} >
+                        <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{item.date}  </Text>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{item.time}</Text>
+                    </View>
                     <Text style={{ fontSize: 12, fontWeight: 'bold' }}>{item.location}</Text>
                 </View>
-                <AntDesign name="delete" size={24} color="red" style={{ width: 40, margin: 0 }} onPress={() => deleteItem(item.id)} />
+                <AntDesign name="delete" size={24} color="red" style={{ width: 30, margin: 20 }} onPress={() => deleteItem(item.id)} />
             </View>
             <View style={styles.itemSeparator} />
         </li>
@@ -94,105 +97,94 @@ const Wishlist = ({ navigation, route }) => {
 
 
     return (
-
-        <ScrollView scrollEnabled={false}>
-            <ImageBackground source={require('../wallpaper.jpg')}
+        <View style={styles.container}>
+            <ImageBackground
+                //source={require('../wallpaper.jpg')}
+                source={{ uri: 'https://example.com/your-image.jpg' }}
                 resizeMode="cover">
                 <View style={styles.overlay} />
-
-                <ScrollView contentContainerStyle={styles.contentContainer}>
-                    <Text style={{ fontSize: 16, color: 'white', minHeight: 30, alignItems: 'center' }}>Upcoming events</Text>
-                    <View style={{ width: 'auto', height: 216, backgroundColor: 'white', flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                        <ScrollView>
-                            <FlatList
-                                data={selected}
-                                keyExtractor={item => item.id}
-                                renderItem={({ item }) => {
-                                    return (
-                                        <Pressable onPress={() => handleOnPress(item)}>
-                                            <View style={{ width: 'auto', flexDirection: 'row', justifyContent: 'flex-start', backgroundColor: item.isFavorite ? '#ccfff2' : 'white' }}>
-                                                <MaterialIcons name="event-available" Text="event" size={48} color='#009973' />
-                                                <View style={{ flexDirection: 'column', flexWrap: 'wrap', width: 260 }}>
-                                                    <Text style={{
-                                                        fontSize: 16, fontWeight: item.isFavorite ? 'bold' : 'normal'
-                                                    }}>{item.eventName}</Text>
-                                                    <Text style={{ fontSize: 12, fontWeight: item.isFavorite ? 'bold' : 'normal' }}>{item.date}</Text>
-                                                    <Text style={{ fontSize: 12, fontWeight: item.isFavorite ? 'bold' : 'normal' }}>{item.location}</Text>
-                                                </View>
-                                                <View style={{ width: 60, flexDirection: 'column', justifyContent: 'flex-start', backgroundColor: item.isFavorite ? '#ccfff2' : 'white' }}>
-                                                    <MaterialCommunityIcons
-                                                        name={item.isFavorite ? "heart" : "heart-outline"}
-                                                        size={24}
-                                                        color={item.isFavorite ? "red" : "black"}
-                                                    />
-                                                    {/* <MaterialCommunityIcons name="magnify-plus-outline" size={30} color="black" onPress={() => handlePopup()} /> */}
-                                                    <View style={styles.container}>
-                                                        {/* Button to Open Popup */}
-                                                        <Text style={{ color: "gray", width: '10', height: '5', fontSize: '6' }}
-                                                            onPress={() => handleSelectItem(item)}
-                                                        >Details..</Text>
+                <ScrollView scrollEnabled={false}>
 
 
+                    <ScrollView contentContainerStyle={styles.contentContainer}>
+                        <Text style={{ fontSize: 16, color: 'white', minHeight: 30, textAlign: 'center' }}>Upcoming events</Text>
+                        <View style={{ width: 'auto', height: 225, backgroundColor: 'white', flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                            <ScrollView >
+                                <FlatList
+                                    data={selected}
+                                    keyExtractor={item => item.id}
+                                    renderItem={({ item }) => {
+                                        return (
+                                            <Pressable onPress={() => handleOnPress(item)}>
+                                                <View style={{ width: 'auto', flexDirection: 'row', justifyContent: 'flex-start', backgroundColor: item.isFavorite ? '#ccfff2' : 'white' }}>
+                                                    <MaterialIcons name="event-available" Text="event" size={48} color='#009973' />
+                                                    <View style={{ flexDirection: 'column', flexWrap: 'wrap', width: 225 }}>
+                                                        <Text style={{
+                                                            fontSize: 16, fontWeight: item.isFavorite ? 'bold' : 'normal'
+                                                        }}>{item.eventName}</Text>
+                                                        <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }} >
+                                                            <Text style={{ fontSize: 12, fontWeight: item.isFavorite ? 'bold' : 'normal' }}>{item.date}  </Text>
+                                                            <Text style={{ fontSize: 12, fontWeight: item.isFavorite ? 'bold' : 'normal' }}>{item.time}</Text>
+                                                        </View>
+                                                        <Text style={{ fontSize: 12, fontWeight: item.isFavorite ? 'bold' : 'normal' }}>{item.location}</Text>
+                                                    </View>
+                                                    <View style={{ width: 60, flexDirection: 'column', justifyContent: 'flex-start', backgroundColor: item.isFavorite ? '#ccfff2' : 'white' }}>
+                                                        <MaterialCommunityIcons
+                                                            name={item.isFavorite ? "heart" : "heart-outline"}
+                                                            size={24}
+                                                            color={item.isFavorite ? "red" : "black"}
+                                                        />
+                                                        {/* <MaterialCommunityIcons name="magnify-plus-outline" size={30} color="black" onPress={() => handlePopup()} /> */}
+                                                        <View style={styles.container}>
+                                                            {/* Button to Open Popup */}
+                                                            <Text style={{ color: "gray", width: '10', height: '5', fontSize: '6' }}
+                                                                onPress={() => handleSelectItem(item)}
+                                                            >Details..</Text>
+
+
+                                                        </View>
                                                     </View>
                                                 </View>
-                                            </View>
-                                            <View style={styles.itemSeparator} />
-                                        </Pressable>
-                                    )
-                                }}
-                            />
-                            {/* Popup Modal */}
-                            <Modal
-                                transparent={true}
-                                visible={modalVisible}
-                                animationType="slide"
-                                onRequestClose={closeModal}
-                            >
-                                <View style={styles.modalBackground}>
-                                    <View style={styles.modalContainer}>
-                                        <Text style={styles.title}>{selectedItem?.eventName}</Text>
-                                        <Text>{selectedItem?.details}</Text>
+                                                <View style={styles.itemSeparator} />
+                                            </Pressable>
+                                        )
+                                    }}
+                                />
+                                {/* Popup Modal */}
+                                <Modal
+                                    transparent={true}
+                                    visible={modalVisible}
+                                    animationType="slide"
+                                    onRequestClose={closeModal}
+                                >
+                                    <View style={styles.modalBackground}>
+                                        <View style={styles.modalContainer}>
+                                            <Text style={styles.title}>{selectedItem?.eventName}</Text>
+                                            <Text>{selectedItem?.details}</Text>
 
-                                        {/* Close Button */}
-                                        <TouchableOpacity
-                                            style={styles.button}
-                                            onPress={closeModal}
-                                        >
-                                            <Text style={styles.buttonText}>Close</Text>
-                                        </TouchableOpacity>
+                                            {/* Close Button */}
+                                            <TouchableOpacity
+                                                style={styles.button}
+                                                onPress={closeModal}
+                                            >
+                                                <Text style={styles.buttonText}>Close</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                </View>
-                            </Modal>
-                        </ScrollView>
-                    </View>
-                    <Text style={{ fontSize: 16, color: 'white', minHeight: 30, alignItems: 'center' }}>My events</Text>
-                    <View style={{ borderRadius: 5, height: 216, backgroundColor: 'white', flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                        <ScrollView>
+                                </Modal>
+                            </ScrollView>
+                        </View>
+                        <Text style={{ fontSize: 16, color: 'white', minHeight: 30, textAlign: 'center' }}>My events</Text>
+                        <View style={{ borderRadius: 5, height: 225, backgroundColor: 'white', flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                            <ScrollView>
 
-                            <ul style={{ margin: 0, padding: 0 }}>{cartItems}</ul>
+                                <ul style={{ margin: 0, padding: 0, width: 'auto' }}>{cartItems}</ul>
 
-                        </ScrollView>
-                    </View>
-                    <View style={styles.bottomNavContainer}>
-                        <TouchableOpacity onPress={() => navigation.navigate("CityExplorerHome", { userName, userToken })} style={styles.navItem}>
-                            <MaterialCommunityIcons name="file-find-outline" size={30} color="black" />
-                            <Text style={styles.navText}>Explore</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate("Wishlist", { userName, userToken })} style={styles.navItem}>
-                            <Feather name="heart" size={30} color="black" />
-                            <Text style={styles.navText}>Wishlist</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate("community", { userName, userToken })} style={styles.navItem}>
-                            <FontAwesome6 name="people-group" size={30} color="black" />
-                            <Text style={styles.navText}>Community</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate("Settings", { userName, userToken })} style={styles.navItem}>
-                            <SimpleLineIcons name="settings" size={30} color="black" />
-                            <Text style={styles.navText}>Settings</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
-                {/* <View style={{
+                            </ScrollView>
+                        </View>
+
+                    </ScrollView>
+                    {/* <View style={{
                     justifyContent: 'flex-end',
                     bottom: 0,
                     left: 0,
@@ -212,8 +204,29 @@ const Wishlist = ({ navigation, route }) => {
                     </View>
                 </View> */}
 
+
+                </ScrollView>
+
             </ImageBackground >
-        </ScrollView>
+            <View style={styles.bottomNavContainer}>
+                <TouchableOpacity onPress={() => navigation.navigate("CityExplorerHome", { userName, userToken })} style={styles.navItem}>
+                    <MaterialCommunityIcons name="file-find-outline" size={30} color="black" />
+                    <Text style={styles.navText}>Explore</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("Wishlist", { userName, userToken })} style={styles.navItem}>
+                    <Feather name="heart" size={30} color="black" />
+                    <Text style={styles.navText}>Wishlist</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("community", { userName, userToken })} style={styles.navItem}>
+                    <FontAwesome6 name="people-group" size={30} color="black" />
+                    <Text style={styles.navText}>Community</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("Settings", { userName, userToken })} style={styles.navItem}>
+                    <SimpleLineIcons name="settings" size={30} color="black" />
+                    <Text style={styles.navText}>Settings</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     );
 };
 
@@ -239,10 +252,12 @@ const styles = StyleSheet.create({
     contentContainer: {
         paddingHorizontal: 20,
         paddingVertical: 30,
-        paddingBottom: 80, // Extra space for the bottom navigation
+        paddingBottom: 100, // Extra space for the bottom navigation
     },
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: '#fff',
+        padding: 2,
     },
     modalBackground: {
         flex: 1,
@@ -256,6 +271,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 10,
         alignItems: 'center',
+        elevation: 5, // Adds shadow for Android
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 }, // Adds shadow for iOS
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        scrollEnabled: false
     },
     title: {
         fontSize: 18,

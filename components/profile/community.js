@@ -84,7 +84,7 @@ const Community = ({ navigation, route }) => {
         }
 
         try {
-            const response = await fetch('http://localhost:2024/addGroup', {
+            const response = await fetch('http://localhost:2024/add_guser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -104,10 +104,33 @@ const Community = ({ navigation, route }) => {
         }
     };
 
+    // const deleteGroup = async (groupId) => {
+    //     try {
+    //         const response = await fetch(http://localhost:2024/deleteGroup, {
+    //             method: 'DELETE',
+    //         });
+    //         const data = await response.json();
+    //         if (data.error) {
+    //             alert(Error: ${data.error});
+    //         } else {
+    //             alert(Group "${data.groupName}" deleted.);
+    //             setCreatedGroups(prevGroups => prevGroups.filter(group => group._id !== groupId));
+    //         }
+    //     } catch (error) {
+    //         console.error('Error deleting group:', error);
+    //         alert('Failed to delete group. Please try again.');
+    //     }
+    // };
     const deleteGroup = async (groupId) => {
         try {
-            const response = await fetch(`http://localhost:2024/deleteGroup`, {
+            const response = await fetch('http://localhost:2024/deleteGroup', {
                 method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    groupId: groupId,
+                }),
             });
             const data = await response.json();
             if (data.error) {
@@ -327,4 +350,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Community;
+export default Community;
